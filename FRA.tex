@@ -1,0 +1,222 @@
+\section{Zero Coupon Bonds}
+\begin{definition}
+    A \textbf{stochastic discount factor} $D(t, T)$ is the price at time t of receiving 1 at time T.
+
+    Consider a deterministic bond $B_t$ with 
+    \begin{equation}
+        dB_t = r_t B_t dt
+    \end{equation}
+    then clearly
+    \begin{equation}
+        B_t = B_0 \cdot e^{\int_{0}^{t} r_s ds} 
+    \end{equation}
+    letting $B_T = 1$, we have $ B_0 = e^{-\int_{0}^{T} r_s ds} = D(0, T)$, so the stochastic discount factor is the price of a riskless bond that pays 1 at T.
+\end{definition}
+\begin{definition}
+    A \textbf{Zero Coupon Bond} is a bond that pays its Face Value at T. 
+    WLOG assume the face value is 1, then its price at t is given by
+    \begin{equation}
+        P(t, T) = E_Q\left[ e^{-\int_{t}^{T} r_t dt }\right] = E_Q\left[ D(t, T) \right]
+    \end{equation}
+    where $r_t$ is the short rate at time t, and the expectation is taken with respect to the risk free measure Q.
+
+    Note in the case when $r_t$ is constant, we have
+    \begin{equation}
+        P(t, T) = E_Q\left[ e^{-r(T - t)} \right] \\
+        = e^{-r(T - t)}
+    \end{equation}
+\end{definition}
+
+\begin{definition}
+    The \textbf{Spot Linear / Simply Compounded / LIBOR Rate} $L$ is the rate that pays linear interest. \\
+    Basically when you pay X, you are supposed to receive $X(1 + L \cdot n)$ after n years \\
+    To receive 1 at T, while paying $P(t, T)$ at time $t$, so the spot rate $L(t, T)$ is given by
+    \begin{align*}
+        p(t, T) (1 + L \cdot (T - t)) = 1 \\
+        L(t, T) = \frac{\frac{1}{P(t, T)} - 1}{T - t} \\
+        = \frac{1 - P(t, T)}{P(t, T) \cdot (T - t)}
+    \end{align*}
+
+\end{definition}
+
+\begin{definition}
+    The \textbf{Spot Compound / Continuous Rate} $R(t, T)$ is the rate that pays continuous interest\\
+    Pay X at t and receive $X \cdot e^{R \cdot (T - t)}$ at T \\
+    To receive 1 at T, while paying $P(t, T)$ at time $t$: 
+    \begin{align*}
+        P(t, T) \cdot e^{R \cdot (T - t)} = 1 
+    \end{align*}
+    so the spot rate $R(t, T)$ is given by
+    $$
+        R(t, T) = \frac{\log(1/P)}{T - t} = 
+        \frac{-\log P(t, T)}{T - t}
+    $$
+    Note here we have the short rate $r_t = \lim_{t \to T^-}R(t, T) \approx R(t, t)$
+\end{definition}
+
+\begin{definition}
+    The \textbf{Annual Spot Rate} $Y$ is the rate that pays interest annually. \\
+    Pay X at t and receive $X \cdot (1 + Y)^{T - t}$ at T \\
+    We again solve
+    \begin{align*}
+        P \cdot (1 + Y)^{T - t} = 1
+    \end{align*}
+    So the spot rate $Y(t, T)$ is given by
+    $$
+        Y(t, T) = \frac{1}{P^\frac{1}{T - t}} - 1
+    $$
+    In this case the zero coupon bond price is given by
+    $$
+        P(t, T) = \frac{1}{(1 + Y)^{T - t}}
+    $$
+\end{definition}
+
+\begin{definition}
+    The \textbf{Zero-Coupon Curve} is the curve given by
+$$
+    T \mapsto 
+\begin{cases} 
+    L(t, T), &  T \leq t+1, \\
+    Y(t, T), & T > t + 1
+\end{cases}
+$$
+Basically, we use the LIBOR rate for expiry within one year, and the annual spot rate for long term rates.
+\end{definition}
+
+\section{Forward Rate Agreement}
+
+\begin{definition}
+    A \textbf{Forward Rate Agreement} (FRA) is a contract between two parties, where one party pays a fixed interest rate and the other party pays a floating interest rate. The contract is settled at the end of the contract period.
+    As we consider at t, the FRA(T, S) is a contract that starts at T and ends at S. The fixed rate is agreed at T, and settled at S. \\
+    For the period (T, S), the holder of the \textbf{Payer FRA} pays fixed $K \cdot (S - T)$ and receives floating $L(T, S) \cdot (S - T)$. \\
+    The holder of the \textbf{Receiver FRA} has the opposite payoff, with payoff at S given by
+    \begin{align*}
+        (K - L(T, S)) \cdot (S - T) \cdot N
+    \end{align*}
+    where N is the notional amount.\\
+    We denote $\tau = S - T$.\\
+    We discount this back to t with the factor D(t, S), and take the expectation under Q to get the price it at t:
+    \begin{align}
+        \text{Receiver FRA(t)} =& N \cdot E_Q\left[ D(t, S) \cdot (K - L(T, S)) \cdot (S - T) \right] \notag \\
+        =& N \tau \cdot E_Q\left[ D(t, S) \cdot (K - L(T, S)) \right]\\
+        =& N (\tau K \cdot P(t, S) - P(t, T) + P(t, S)) 
+    \end{align}
+\end{definition}
+    \begin{proof}
+    Note we showed the spot rate $L(T, S)$ is given by
+    $$
+        L = \frac{1 - P}{P \cdot (T - t)}
+    $$
+    In this case
+    $$
+        L(T, S) = \frac{1 - P(T, S)}{P(T, S) \cdot \tau}
+    $$
+    At S, the Receiver FRA is worth 
+    \begin{align*}
+        N \cdot \tau \cdot (K - L(T, S))  
+        =& N \cdot \tau \cdot (K - \frac{1 - P(T, S)}{P(T, S) \cdot \tau}) \\
+        =& N \cdot \tau \cdot (K - \frac{1}{P(T, S) \cdot \tau} + \frac{1}{\tau}) \\
+        =& N (\tau K - \frac{1}{P(T, S)} + 1)
+    \end{align*}
+    Note holding $P(T, S)$ at T is equivalent to holding 1 at S, so we can use $P(T, S)$ as the discount factor from S to T.\\
+    Similarly, holding $P(t, T)$ at T is equivalent to holding 1 at T, so we can use $P(t, T) P(T, S)$ as the discount factor from S to t.\\
+    At t, the Receiver FRA is multiplied by the discount factor $P(t, S) = P(t, T) P(T, S)$:
+    \begin{align*}
+        P(t, S) N (\tau K - \frac{1}{P(T, S)} + 1) \\
+        = N (\tau K \cdot P(t, S) - P(t, T) + P(t, S)) 
+    \end{align*}
+\end{proof}
+
+To make the FRA a fair contract, we should make the price of the Receiver FRA equal to 0 at t.\\
+We solve FRA(K) = 0 to get the fair rate K:
+\begin{align*}
+    N (\tau K \cdot P(t, S) - P(t, T) + P(t, S)) = 0 \\
+    \Rightarrow K = \frac{P(t, T) - P(t, S)}{\tau \cdot P(t, S)}
+\end{align*}
+
+\begin{definition}
+    The \textbf{Forward Linear Rate} $F(t, T, S)$ is the rate that pays interest from T to S, agreed at time t. \\
+    The forward rate is given by
+    \begin{align*}
+        F(t, T, S) = \frac{P(t, T) - P(t, S)}{P(t, S) \cdot \tau} = K
+    \end{align*}
+\end{definition}
+
+Note in (2.1) and (2.2), we showed
+\begin{equation}
+    \tau \cdot E_Q\left[ D(t, S) \cdot (K - L(T, S)) \right] = \tau K \cdot P(t, S) - P(t, T) + P(t, S) \notag
+\end{equation}
+Where
+\begin{align*}
+    E_Q\left[ D(t, S) \cdot (K - L(T, S)) \right] = K \cdot P(t, S) - E_Q\left[ D(t, S) \cdot L(T, S) \right]
+\end{align*}
+Hence
+\begin{align*}
+    P(t, T) - P(t, S) =& \tau \big( K \cdot P(t, S) - E_Q\left[ D(t, S) \cdot (K - L) \right] \big)\\
+    =& \tau \big( K \cdot P(t, S) - K \cdot P(t, S) + E_Q\left[ D(t, S) \cdot L(T, S) \right] \big)\\
+    =& \tau \cdot E_Q\left[ D(t, S) \cdot L(T, S) \right]
+\end{align*}
+So we have
+\begin{align*}
+    \frac{P(t, T) - P(t, S)}{\tau} = E_Q\left[ D(t, S) \cdot L(T, S) \right]
+\end{align*}
+Note the LHS is also equal to $F(t, T, S) \cdot P(t, S)$, so we have
+\begin{equation}
+    F(t, T, S) \cdot P(t, S) = E_Q\left[ D(t, S) \cdot L(T, S) \right]
+\end{equation}
+Where we had $P(t, S) = E_Q\left[ D(t, S) \right] $, so we know $ F(t, T, S) \neq E_Q\left[ L(T, S) \right] $.\\
+Otherwise we would have $D(t, S)$ and $L(T, S)$ uncorrelated, which is not true.
+
+Note we can rewrite (2.2)
+\begin{align}
+    \text{Receiver FRA(t)} 
+    =& N (\tau K \cdot P(t, S) - P(t, T) + P(t, S)) \notag \\
+    =& N \tau \cdot P(t, S) \left( K - \frac{P(t, T)}{P(t, S) \tau} + \frac{1}{\tau}\right) \notag \\  
+    =& N \tau \cdot P(t, S) \left( K - \frac{P(t, T) - P(t, S)}{P(t, S) \cdot \tau}\right) \notag \\
+    =& N \tau \cdot P(t, S) \left( K - F(t, T, S) \right)
+\end{align}
+And we obviously have Receiver FRA(K = F(t, T, S)) = 0. \\
+Recall that at S, the Receiver FRA is worth 
+\begin{align*}
+    N \tau (K - L(T, S))  
+\end{align*}
+So $ F(t, T, S) $ can be viewed as an estimate for the future spot rate $L(T, S)$, which is random at t.
+
+\begin{definition}
+    The \textbf{Instantaneous Forward Rate} $f(t, T)$ is the rate that pays interest from T to T + dt, computed by taking the following limit \\
+    \begin{align*}
+        F(t, T) =& \lim_{\tau \to 0} F(t, T, T + \tau) = \lim_{\tau \to 0} \frac{P(t, T) - P(t, T + \tau)}{P(t, T + \tau) \cdot \tau} \\
+        =& \lim_{\tau \to 0} -\frac{1}{P(t, T + \tau)} \cdot \frac{P(t, T + \tau) - P(t, T)}{\tau}  \\
+        =& -\frac{1}{P(t, T)} \cdot \frac{\partial}{\partial T} P(t, T) \\
+        =& -\frac{\partial}{\partial T} \log P(t, T)
+    \end{align*}
+\end{definition}
+
+\section{Interest Rate Swaps}
+\begin{definition}
+    An \textbf{Interest Rate Swap} is a contract between two parties, where FRA are exchanged at future dates $T_{\alpha}, T_{\alpha+1}, \dots, T_{\beta}$.\\
+    We define the time intervals $\tau = (\tau_{\alpha+1}, \dots, \tau_{\beta})$, where $\tau_i = T_{i} - T_{i-1}$.\\
+    The \textbf{Receiver Swap (RFS)} has payoff at each payment date given by
+    \begin{align*}
+        N \tau_i (K - L(T_{i-1}, T_i))  
+    \end{align*}
+    and the  \textbf{Payer Swap (PFS)} has the opposite payoff.\\
+    We discount each payment back to t with  $D(t, T_i)$, and take the expectation under Q to get the price it at t:
+    \begin{align}
+        \text{RFS(t)} =& E_Q\left[ N \sum_{i = \alpha + 1}^{\beta} \tau_i \cdot D(t, T_i) \cdot (K - L(T_{i-1}, T_i)) \right]  
+    \end{align}
+
+    We can also view it as a sum of Receiver FRA, so we can plug in (2.4) and have
+    \begin{align}
+        \text{RFS(t)} =& \sum_{i = \alpha + 1}^{\beta} FRA(t, T_{i-1}, T_i, \tau_i, N) \notag \\
+        =& N \sum_{i = \alpha + 1}^{\beta} \tau_i \cdot P(t, T_i) \left( K - F(t, T_{i-1}, T_i) \right) \notag\\
+        =& N \sum_{i = \alpha + 1}^{\beta} \tau_i \cdot P(t, T_i)\left( K - \frac{P(t, T_{i-1}) - P(t, T_i)}{P(t, T_i) \cdot \tau_i}\right) \notag\\
+        =& N \sum_{i = \alpha + 1}^{\beta} \Big( \tau_i P(t, T_i)  K - P(t, T_{i-1}) + P(t, T_i) \Big) \notag\\
+        =& N \Big( \sum_{i = \alpha + 1}^{\beta} \tau_i P(t, T_i)  K - P(t, T_{\alpha}) + P(t, T_{\beta}) \Big) 
+    \end{align}
+    
+    
+    
+    
+    
+\end{definition}

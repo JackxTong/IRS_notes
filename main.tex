@@ -1,0 +1,137 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
+
+\usepackage{tcolorbox}
+\usepackage{authblk}  % Lets you add an \affil{} to your title, stating your affiliation {eg. Sigma Mathematics Society}
+\usepackage{ragged2e}
+\usepackage{csquotes}
+\usepackage{pdfpages}
+
+\usepackage[a4paper, total={6.6in, 9in}, textheight=720pt, voffset=35pt, footnotesep=25pt]{geometry} % Adjust margins as necessary
+
+\usepackage{xfrac}
+\usepackage{cancel}
+
+\usepackage[inline]{enumitem}
+
+%\usepackage{tgpagella}
+
+\usepackage{blindtext}
+\usepackage{lipsum}
+\usepackage{verbatim}
+\usepackage{hyperref}
+\hypersetup{
+    citebordercolor = 1 1 1,
+    linkbordercolor = 1 1 1,
+    filebordercolor = 1 1 1,
+    menubordercolor = 1 1 1,
+    urlbordercolor = 1 1 1,
+    colorlinks  =   true,
+    linkcolor   =   blue,
+    citecolor   =   magenta,
+    urlcolor    =   blue
+}
+
+\usepackage{biblatex} % Modify citation format using [style=yourstyle] parameter--eg \usepackage[style=mla-new]{biblatex}
+\bibliography{References.bib}
+\addbibresource{References.bib}
+
+\usepackage{cancel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+%\usepackage{MnSymbol}
+\usepackage{mathrsfs}
+\usepackage{mathtools}
+
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{longtable}
+
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+
+% Theorem layout
+
+\usepackage{amsthm}
+
+\newtheorem*{theorem*}{Theorem}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{algorithm}[theorem]{Algorithm}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem*{claim*}{Claim}
+\newenvironment{boxexample}{
+    \begin{tcolorbox}\begin{example}
+}{
+    \end{example}\end{tcolorbox}
+}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+% Structure and Numbering
+
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+
+\pagestyle{fancy}
+\fancyhf{}
+
+\rhead{{Page \thepage }}%\hspace{1pt} of \pageref{LastPage}}}
+\lhead{\textit\slshape\nouppercase{\leftmark}}
+
+\numberwithin{equation}{section}
+
+% Spacing and indentation
+
+\usepackage{setspace}
+\renewcommand{\baselinestretch}{1.5}
+
+\usepackage[skip=18pt, indent=0pt]{parskip}
+\usepackage{indentfirst}
+
+\allowdisplaybreaks  % Allows align environments to continue for several pages
+
+\title{\vspace{-4em}Some Maths on Interest Rates}
+\author{Tong Xiao}
+\affil{Imperial College London}
+
+\begin{document}
+
+\setlength{\abovedisplayskip}{7.5pt}  % Space above an align environment
+\setlength{\belowdisplayskip}{7.5pt}  % Space below an align environment
+\setlength{\abovedisplayshortskip}{2pt}
+\setlength{\belowdisplayshortskip}{2pt}
+
+\maketitle
+
+\vspace{-2em}
+
+\tableofcontents
+
+\thispagestyle{empty}
+
+\newpage
+\input{FRA.tex}
+% \input{1_Introduction.tex}
+% \input{2_Degree.tex}
+% \input{3_Reductions}
+% \input{4_Kurodas_Theorem}
+% \input{5_Conclusion}
+% \appendix
+% \input{A_Claim_B}
+
+\printbibliography
+
+\end{document}
