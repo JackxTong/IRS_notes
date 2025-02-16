@@ -8,4 +8,4 @@ Need to download [MacTeX](https://www.tug.org/mactex/mactex-download.html)
 
 Then install LaTex Workshop extension, and make sure your copilot is working
 
-In a folder, create a `.tex` file, use `cmd+option+B` to build project, `Cmd+Option+V` to view pdf
+In a folder, create a `.tex` file, use `Cmd+option+B` to build project, `Cmd+Option+V` to view pdf

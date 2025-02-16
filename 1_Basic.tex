@@ -1,0 +1,454 @@
+\section{Basics}
+
+\subsection{Risk Neutral Measure}
+
+\begin{definition}
+    Let $(\Omega, \mathcal{F}, \mathbb{P})$ be a probability space.\\
+    A \textbf{measure} is a function $\mu: \mathcal{F} \to [0, \infty]$ such that:
+    \begin{align*}
+        \mu(\emptyset) &= 0\\
+        \mu(A) &\geq 0 \; \forall A \in \mathcal{F}\\
+        \mu(\bigcup_{i=1}^{\infty} A_i) &= \sum_{i=1}^{\infty} \mu(A_i)
+    \end{align*}
+    for any disjoint sequence of sets $A_i \in \mathcal{F}$.\\
+    A \textbf{probability measure} is a measure $\mathbb{P}$ such that $\mathbb{P}(\Omega) = 1$.
+\end{definition}
+
+\begin{definition}
+    Given measure space $(X, \mathcal{F}, \mu)$, and let $q$ be a $\sigma$-finite measure on $(X, \mathcal{F})$\\
+    We say that $q$ is \textbf{absolutely continuous} with respect to $\mu$, denoted as $q \ll \mu$, if $\mu(A) = 0$ implies $q(A) = 0$.
+    The two are \textbf{equivalent martingale measure} if $q \ll \mu$ and $\mu \ll q$, or
+    \begin{align*}
+        q(A) = 0 \iff \mu(A) = 0
+    \end{align*}
+\end{definition}
+
+\begin{definition}
+    A \textbf{risk-neutral measure} is a probability measure $\mathbb{Q}$ such that 
+    for any tradble asset $S_t$, its discounted price process $S_t^* = S_t / B_t$ is a martingale under $\mathbb{Q}$:\\
+    For all $ T > t$:
+    \begin{align*}
+        E_{\mathbb{Q}}[S_T / B_T | \mathcal{F}_t] = S_t / B_t \\
+    \end{align*}
+An easy corollary is that
+    \begin{align*}
+        E_{\mathbb{Q}}[S_t] / B_t = S_0 / B_0 = S_0 \\
+        E_{\mathbb{Q}}[S_t] / S_0 = B_t / B_0 = e^{rt} 
+    \end{align*}
+    This is also equivalent to saying that under Q, the drift for any $S_t$ is $r S_t$:
+    \begin{align*}
+        dS_t = r S_t dt + \sigma S_t dW_t^Q
+    \end{align*}
+\end{definition}
+\begin{definition}
+    A basic portfolio $\pi$ with weight vector $\pi_t = (\pi_{t, 0}, \pi_{t, 1})$ 
+    has price process $V_t$:
+    \begin{align*}
+        V_t =& \pi_{t, 0} B_t + \pi_{t, 1} S_t
+    \end{align*}
+    A portfolio $\pi$ with price process $V_t$ is \textbf{self-financing} if:
+    \begin{align*}
+        dV_t &= \pi_{t, 0} \, dB_t + \pi_{t, 1} \, dS_t 
+    \end{align*}
+    In discrete time, we can write
+    \begin{align*}
+    V_t = \pi_{t-1, 0} B_t + \pi_{t-1, 1} S_t
+    \end{align*}
+    i.e. A portfolio's only change in value is due to change in price of $B_t$ and $S_t$, 
+    so not external cash flow
+\end{definition}
+
+\begin{definition}
+    A portfolio $\pi$ is \textbf{arbitrage} if it is \textbf{self-financing}, 
+    adapted to the filtration $\mathcal{F}_t$, and:
+    \begin{align*}
+        V_0(\pi) &= 0 \\
+        P(V_T(\pi) \geq 0) &= 1 \\
+        P(V_T(\pi) > 0) &> 0
+    \end{align*}
+\end{definition}
+
+    \begin{theorem}
+        Any price process $V_t$ is \textbf{arbitrage-free} iff there is an EMM $\mathbb{Q}$. \\
+        In this case the discounted $\frac{V_t}{B_t}$ is a martingale under $\mathbb{Q}$.
+    \end{theorem}
+    \begin{proof}
+        By self-financing, we have
+        \begin{align*}
+            V_t =& \pi_{t-1, 0} B_t + \pi_{t-1, 1} S_t \\
+            \frac{V_t}{B_t} =& \pi_{t-1, 0} + \pi_{t-1, 1} \frac{S_t}{B_t}
+        \end{align*}
+        Since $\frac{S_t}{B_t}$ is a martingale under $\mathbb{Q}$, 
+        we have that at time $t-1$
+        \begin{align*}
+            E_Q \left[\frac{V_t}{B_t} | \mathcal{F}_{t-1}\right] =& \pi_{t-1, 0} + 
+            \pi_{t-1, 1} E_Q \left[\frac{S_t}{B_t} | \mathcal{F}_{t-1}\right] \\
+            =& \pi_{t-1, 0} + \pi_{t-1, 1} \frac{S_{t-1}}{B_{t-1}} \\
+            =& \frac{V_{t-1}}{B_{t-1}}
+        \end{align*}
+        So $\frac{V_t}{B_t}$ is a martingale under $\mathbb{Q}$.\\
+        We can repeatedly apply to show 
+        $$
+         E_Q \left[\frac{V_t}{B_t} \right] = \frac{V_0}{B_0} = 0
+        $$
+        If $\pi$ were an arbitrage, we would have $ P(V_T(\pi) \geq 0) = 1 \implies 
+        Q(V_T(\pi) \geq 0) = 1$,\\
+        This suggests that under Q, $\pi$ is nonnegative but with expectation 0, so it has to be 0 a.s.\\
+        But we also have $ P(V_T(\pi) > 0) > 0 \implies Q(V_T(\pi) > 0) > 0$, hence a contradtion.
+    \end{proof}
+
+\subsection{To Find Q}
+We note $S_t^* = \frac{S_t}{B_t}$ is a martingale under $\mathbb{Q}$, with $B_t$ being the numeraire.\\
+To work out Q, we simply solve 
+\begin{align*}
+    E_{\mathbb{Q}}[S_T^* | \mathcal{F}_t] = S_t^*
+\end{align*}
+Or equivalently,
+\begin{align*}
+    E_{\mathbb{Q}}[S_T | \mathcal{F}_t] = S_t \frac{B_T}{B_t} = S_t e^{r(T-t)}
+\end{align*}
+\subsubsection{Binomial Model}
+A simple example is the binomial model, where at t, there are two possible outcomes for $t+1$:\\
+$S_t U$ and $S_t D$, with probabilities $q^+$ and $q^-$ respectively.\\
+So we can write
+\begin{align*}
+    E_{\mathbb{Q}}[S_T | \mathcal{F}_t] = S_t U q^+ + S_t D q^-
+\end{align*}
+We solve
+\begin{align*}
+    S_t e^{r(t+1-t)} =& S_t U q^+ + S_t D q^- \\
+    e^{r} =& U q^+ + D (1-q^+) 
+\end{align*}
+And we get $ q^+ = \frac{e^r - D}{U - D}$, $ q^- = \frac{U - e^r}{U - D}$ \\
+
+\begin{example}
+    If a stock is at 100, can move to 90 or 120 in a year, with r = 0\\
+    Real world probability of moving up or down is not important.
+    Under Q, we have $q^+ = \frac{e^0 - 0.9}{1.2 - 0.9} = \frac{1}{3}$, 
+    $q^- = \frac{1 - e^0}{1.2 - 0.9} = \frac{2}{3}$
+\end{example}
+
+\subsubsection{Trinomial Model}
+Under the trinomial model, we have three possible outcomes for $t+1$:\\
+$S_t U, S_t M, S_t D$ with probabilities $q^+, (1 - q^+ - q^-), q^-$ respectively.\\
+In this case we solve 
+\begin{align*}
+    S_t U q^+ + S_t M (1 - q^+ - q^-) + S_t D q^- =&  S_t e^{r}\\
+    U q^+ + M (1 - q^+ - q^-) + D q^- =& e^{r}
+\end{align*}
+This is solvable iff $U > e^r > D$.\\
+In general, the trinomial model may have 0 or infinitely many solutions.\\
+
+\begin{theorem}
+    A market is \textbf{complete} if every payoff is attainable.\\
+    In a complete market, there is a unique EMM $\mathbb{Q}$.
+\end{theorem}
+
+A binomial model is complete, and always has a unique solution Q, 
+hence every payoff is attainable and has a unique price.\\
+Whereas in a trinomial model, some payoffs have multiple EMMs, and hence multiple prices.\\
+
+\begin{example}
+We hereby give an example of a trinomial model with multiple EMMs, but quoting unique price for an ITM put option.\\
+Consider
+\begin{align*}
+    S_0 = 10, K = 25, r = \mu = 0.04, h = 0.1, T = 4\\
+    U = e^{\mu + h} = e^{0.04 + 0.1} = e^{0.14}, \\
+    M = e^{\mu} = e^{0.04} = R = e^r , \\
+    D = e^{\mu - h} = e^{0.04 - 0.1} = e^{-0.06}, 
+\end{align*}
+We have $U > R > D$, so the model is solvable.\\
+We can solve the equation:
+\begin{align*}
+    \frac{U}{R}q_+ + \frac{M}{R}(1 - (q_+ + q_-)) + \frac{D}{R}q_- &= 1 \\
+    q_+\left(\frac{U - M}{R}\right) + q_-\left(\frac{D - M}{R}\right) &= 1 - \frac{M}{R} = 1 - \frac{e^{0.04}}{e^{0.04}} = 0
+\end{align*}
+This is a straight line with infinite solutions. Given any $ q_+ $, we have:
+$$
+q_- = - \frac{U-M}{D-M}q_+ =
+- \frac{e^{0.14} - e^{0.04}}{e^{-0.06} - e^{0.04}}q_+.
+$$
+We have that Q is an EMM as $\mathbb{Q}[A] > 0 
+\iff \mathbb{P}[A] > 0 $ for all $A \in \mathcal{F}^S_t$.\\
+We can for example pick a choice of $ (q_+, q_-) = (0.2, 0.2210) $ for Q \\
+We start by constructing the trinomial tree for the stock price, from $ S_0 = 10 $ 
+
+\[
+\begin{array}{c|cccccc}
+ & & & &  \cellcolor{gray!20}17.507 & & \\
+ & & & \cellcolor{gray!20}15.220 & \cellcolor{gray!20}15.841 & & \\
+ & & \cellcolor{gray!20}13.231 & \cellcolor{gray!20}13.771 & \cellcolor{gray!20}14.333 & & \\
+ & \cellcolor{gray!20}11.503 & \cellcolor{gray!20}11.972 & \cellcolor{gray!20}12.461 & \cellcolor{gray!20}12.969 & & \\
+\cellcolor{gray!20}10.000 & \cellcolor{gray!20}10.408 & \cellcolor{gray!20}10.833 & \cellcolor{gray!20}11.275 & \cellcolor{gray!20}11.735 & & \\
+ & \cellcolor{gray!20}9.418 & \cellcolor{gray!20}9.802 & \cellcolor{gray!20}10.202 & \cellcolor{gray!20}10.618 & & \\
+ & & \cellcolor{gray!20}8.869 & \cellcolor{gray!20}9.231 & \cellcolor{gray!20}9.608 & & \\
+ & & & \cellcolor{gray!20}8.353 & \cellcolor{gray!20}8.694 & & \\
+ & & & & \cellcolor{gray!20}7.866 & &
+\end{array}
+\]
+
+To build the trinomial tree for the put option, we need to calculate the payoff at each leaf node, given by $ (25 - S_T)^+ $\\
+At $ T = 4$, all payoffs are positive, being: $ 25 - 17.507 = 7.493, \cdots, 25 - 7.866 = 17.134 $.\\
+Each node at $ T = 3 $ is given by the expectation over Q of each of its possible payoffs $ (K - S_4)^+ $, discounted back to $ T = 3 $
+ with a factor of $ \frac{1}{R} = e^{-0.04} $.\\
+With our choice of $ (q_+, q_-) = (0.2, 0.2210) $, the price of the put at
+  the upper node at $ t = 3 $ is given by 
+\begin{align*}
+e^{-0.04} \left( 7.493 q_+ + 9.159 (1 - (q_+ + q_-)) + 10.667 q_- \right) \\
+= e^{-0.04} \left( 7.493 * 0.2 + 9.159 * 0.579 + 10.667 * 0.2210 \right) = 8.800
+\end{align*}
+and so on. We arrived with the following arbirage-free tree, which has the non-arbitrage price of the put at each time under each possible stock price, 
+under the risk-neutral measure Q:
+\[
+\begin{array}{c|cccccc}
+ & & & & \cellcolor{gray!20}7.493 & & \\
+ & & & \cellcolor{gray!20}8.800 & \cellcolor{gray!20}9.159 & & \\
+ & & \cellcolor{gray!20}9.847 & \cellcolor{gray!20}10.248 & \cellcolor{gray!20}10.667 & & \\
+ & \cellcolor{gray!20}10.670 & \cellcolor{gray!20}11.106 & \cellcolor{gray!20}11.559 & \cellcolor{gray!20}12.031 & & \\
+\cellcolor{gray!20}11.304 & \cellcolor{gray!20}11.765 & \cellcolor{gray!20}12.245 & \cellcolor{gray!20}12.745 & \cellcolor{gray!20}13.265 & & \\
+ & \cellcolor{gray!20}12.755 & \cellcolor{gray!20}13.276 & \cellcolor{gray!20}13.818 & \cellcolor{gray!20}14.382 & & \\
+ & & \cellcolor{gray!20}14.209 & \cellcolor{gray!20}14.789 & \cellcolor{gray!20}15.392 & & \\
+ & & & \cellcolor{gray!20}15.667 & \cellcolor{gray!20}16.306 & & \\
+ & & & & \cellcolor{gray!20}17.134 & &
+\end{array}
+\]
+We additionally note that the whole tree is independent of our choice of $ (q_+, q_-) $, 
+i.e. if we use $ (0.1, 0.111 ) $, we will get the same tree.\\
+The reasons behind is this:\\
+We have showed that any $ (q_+, q_-) $ that satisfies $ q_+ > 0, q_- > 0, 1 - q_+ - q_- > 0 $ and
+\begin{align*}
+    \frac{1}{R} \left( U q^+ + M (1 - (q^+ + q^-)) + D q^- \right) = 1 \\
+\end{align*}
+is an EMM.\\ 
+Given the possible payoffs $ P(U), P(M), P(D) $ at $ t+1 $, where $ P(x) = (K - S_t x)^+ $, 
+we have that the price of the put option at $ t $ is given by
+\begin{align*}
+    {\Pi}_t(S_t) = \frac{1}{R} \left( q^+ P(U) + (1 - (q^+ + q^-)) P(M) + q^- P(D) \right)
+\end{align*}
+In general this should differs with different choices of $ (q_+, q_-) $, \\
+But we note that our interested payoff is a deep ITM put option, with $ K > S_0 U^4 > S_0 M^4 > S_0 D^4$, 
+so we have that at $ t = T-1$: $ P(U) = (K - S_t U)^+ = K - S_t U $, and vice versa for $ P(M), P(D) $,
+\begin{align*}
+    {\Pi}_t(S_t) =& \frac{1}{R} \left( q^+ (K - S_t U) + (1 - (q^+ + q^-)) (K - S_t M) + q^- (K - S_t D) \right) \\
+    =& \frac{1}{R} \left( K \cdot 1 - S_t (U q^+ + M (1 - (q^+ + q^-)) + D q^-) \right) \\
+    =& \frac{K}{R} - S_t \frac{1}{R} \left( U q^+ + M (1 - (q^+ + q^-)) + D q^- \right) \\
+    =& \frac{K}{R} - S_t
+\end{align*}
+so the price of the put option at $T-1$ is independent of our choice of $ (q_+, q_-) $.\\
+Now we consider $ t = T-2$: \\
+the potential payoffs at $T-1$ is $ \frac{K}{R} - S_t U, \frac{K}{R} - S_t M, \frac{K}{R} - S_t D $, \\
+So at $ t = T-2 $:
+\begin{align*}
+    {\Pi}_t(S_{T-2}) =& \frac{1}{R} \left( q^+ \left( \frac{K}{R} - S_t U \right) + (1 - (q^+ + q^-)) \left( \frac{K}{R} - S_t M \right) + q^- \left( \frac{K}{R} - S_t D \right) \right) \\
+    =& \frac{1}{R} \left( \frac{K}{R} - S_t (U q^+ + M (1 - (q^+ + q^-)) + D q^-) \right) \\
+    =& \frac{K}{R^2} - S_t
+\end{align*}
+Recursively, we note that our put has the same price as a short position in forward contract at each $t$, \\
+i.e.
+\begin{align*}
+    {\Pi}_t(S_t) = K e^{-r(T-t)} - S_t
+\end{align*}
+
+We can check that at t = 0, we can discount K to
+$ K e^{-rT} = 25 e^{-0.04 \cdot 4} = 21.304 $ to get $ {\Pi}_0 = K e^{-rT} - S_0 = 11.304 $.
+\end{example}
+
+
+\subsection{Change of Measure}
+We have examined changing measure from $\mathbb{P}$ to $\mathbb{Q}$, 
+now we should explore more general changes of measure.\\
+
+\begin{theorem}[Radon-Nikodym Theorem]
+
+If $q \ll \mu$, then there exists a unique measurable function $f: X \to [0, \infty]$:
+\[
+dq = f d\mu
+\]
+
+or equivalently,
+\[
+q(A) = \int_A f \, d\mu, \quad \forall A \in \mathcal{F}.
+\]
+
+where $f$ is the \textbf{Radon-Nikodym derivative}:
+:
+\[
+f = \frac{dq}{d\mu}.
+\]
+\end{theorem}
+
+We can compute the expecation under Q using the Radon-Nikodym derivative $\frac{dQ}{dP}$:
+\begin{align*}
+    E_Q[X] = \int X \, dQ \\
+    = \int X \frac{dQ}{dP} \, dP \\
+    = E_P\left[\frac{dQ}{dP}X\right]
+\end{align*}
+
+\begin{definition}
+    A numeraire is a nonnegative random variable $S_t$ such that $S_t > 0$ a.s. \\
+    In general, this can be any non-dividend paying tradable asset.\\
+    Given a numeraire $S_t$, a measure $\mathbb{Q^S}$ is such that
+    $Y/S$ is a martingale under $\mathbb{Q^S}$, where Y is any other tradable asset.
+    (also non-dividend paying)
+\end{definition}
+We note that when the numeraire is $B_t$, we have $\mathbb{Q} = \mathbb{Q^B}$.\\
+Say under $\mathbb{Q^B}$, some tradable asset $S$ has this SDE:
+\begin{align*}
+    dS_t = \mu^B dt + \sigma^B dW_t^B
+\end{align*}
+Where $\mu^B, \sigma^B$ are functions of $t, S_t$.\\
+We have by Leibniz's rule:
+\begin{align*}
+    d\frac{S_t}{B_t} = S_t d(\frac{1}{B_t}) + \frac{1}{B_t} dS_t + dS_t d(\frac{1}{B_t})
+\end{align*}
+Notice the quadratic variation term $dS_t d(1/B_t)$ is 0, 
+as this is a multiple of $ d_t dW_t $, which is 0. So we have:
+\begin{align*}
+    d\frac{S_t}{B_t} =& S_t d(e^{-rt}) + \frac{1}{B_t} dS_t \\
+    =& S \cdot (-r) e^{-rt} dt + e^{-rt}  \left( \mu^B dt + \sigma^B dW_t \right)\\
+    =& e^{-rt} \left( S \cdot (-r) dt +  \mu dt + \sigma dW \right) \\
+    =& \frac{1}{B_t} \left( \left( \mu - r S_t \right) dt + \sigma dW_t \right)
+\end{align*}
+Since $S_t/B_t$ is a martingale, which should have zero drift, we must have $ \mu = r S_t $.\\
+i.e. Under $\mathbb{Q^B}$, 
+all tradable assets have drifts equal to $r$ times the asset price,
+which is precisely the definition of the risk-neutral measure.\\
+
+
+\begin{theorem}[Girsanov's Theorem]
+Let $W_t$ be a Brownian motion under the measure $\mathbb{P}$, and let $\theta_t$ be a predictable process.\\
+Define the process:
+\begin{align*}
+    Z_t = \exp\left(\int_0^t \theta_s dW_s - \frac{1}{2} \int_0^t \theta_s^2 ds\right)
+\end{align*}
+Then, under the measure $\mathbb{Q}$ defined by the Radon-Nikodym derivative:
+\begin{align*}
+    \frac{d\mathbb{Q}}{d\mathbb{P}} = Z_T
+\end{align*}
+the process $W_t - \int_0^t \theta_s ds$ is a Brownian motion under the measure $\mathbb{Q}$.
+    
+\end{theorem}
+
+\subsection{Stochastic Integral}
+Consider the following SDE:
+\begin{align*}
+    dX_t = \mu(t, X_t)dt + \sigma(t, X_t)dW_t
+\end{align*}
+We note that $t \mapsto W_t$ is continuous but nowhere differentiable.\\
+In other words, $d W_t$ cannot be interpreted as a time differential.
+\\
+\begin{definition}
+Let $f$ and $g$ be functions defined on the interval $[a, b]$, where $f$ is a continuous function and $g$ is a function of bounded variation on $[a, b]$. 
+The \textbf{Riemann-Stieltjes Integral}  of $f$ with respect to $g$ over $[a, b]$ is defined as:
+
+\[
+\int_a^b f(x) \, dg(x) = \lim_{||P|| \to 0} \sum_{i=1}^{n} f(\xi_i) \Delta g_i
+\]
+
+whenever this limit exists. Here, 
+
+- $P = \{ a = x_0 < x_1 < \dots < x_n = b \}$ is a partition of $[a, b]$,
+- $\xi_i \in [x_{i-1}, x_i]$ is a sample point,
+- $\Delta g_i = g(x_i) - g(x_{i-1})$, and
+- $||P||$ is the norm of the partition, given by the length of the largest subinterval.
+\end{definition}
+
+We note that by definition, $W_t$ has unbounded variation.\\
+Given a path $t \mapsto W_t(\omega)$, the integral:
+\begin{align*}
+    \int_0^t f(s, X_s(\omega))dW_s(\omega)
+\end{align*}
+does not exist as a \textbf{Riemann-Stieltjes Integral}.
+\begin{proof}
+    If it can be defined as a \textbf{Riemann-Stieltjes Integral}, this limit should converge:
+    \begin{align*}
+        \int_0^T \sigma(X_s)dW_s = \lim_{||P|| \to 0} \sum_{i=1}^{n} \sigma(X_{\xi_i}) (W_{t_{i+1}} - W_{t_{i}})
+    \end{align*}
+    for any partition $P = \{0 = t_0 < t_1 < \dots < t_n = T\}$ and any sample points $\xi_i \in [t_{i}, t_{i+1}]$.\\
+    This does not work for brownian motion, as the variation of $W_t$ is unbounded.\\
+    More precisely,  for a partition $P_n$, define the upper and lower bound:
+    \begin{align*}
+        U(f, P_n) &= \sum_{i=1}^{n} \sup_{t \in [t_{i-1}, t_i]} f(t, X_t) (W_{t_{i+1}} - W_{t_{i}})\\
+        L(f, P_n) &= \sum_{i=1}^{n} \inf_{t \in [t_{i-1}, t_i]} f(t, X_t) (W_{t_{i+1}} - W_{t_{i}})
+    \end{align*}
+    the Riemann Integral exists iff:
+    \begin{align*}
+        U(f, P_n) - L(f, P_n) \to 0
+    \end{align*}
+\end{proof}
+
+\begin{definition}
+    The \textbf{Ito Integral} uses the left point of each subinterval to define the integral:
+    \begin{align*}
+        \int_0^T f(s, X_s)dW_s = \lim_{n \to \infty} \sum_{i=1}^{n} f(t_{i}, X_{t_{i}}) (W_{t_{i+1}} - W_{t_{i}})
+    \end{align*}
+\end{definition}
+
+\begin{definition}
+    The \textbf{Stratonovich Integral} uses the midpoint of each subinterval to define the integral:
+    \begin{align*}
+        \int_0^T f(s, X_s) \circ dW_s = \lim_{n \to \infty} \sum_{i=1}^{n} f(\frac{t_{i} + t_{i+1}}{2}, X_{\frac{t_{i} + t_{i+1}}{2}}) (W_{t_{i+1}} - W_{t_{i}})
+    \end{align*}
+\end{definition}
+
+\begin{remark}
+Stratonovich looks into the future, while Ito does not.\\
+This is because as we are evaluating at $t_{i}$, Ito evaluates $f(X)$ at $t_{i}$, while Stratonovich evaluates $f(X)$ at $\frac{t_{i} + t_{i+1}}{2}$.\\ 
+Note clearly if $f(t, X_t)$ is a deterministic function of t, then the two integrals are the same.
+\end{remark}
+
+We know that 
+\begin{align*}
+    E[W] = 0\\
+    E[W_t^2] = t\\
+    W_T - W_t \sim N(0, T-t)
+\end{align*}
+
+More formally, in the Ito integral, we have:
+\begin{align*}
+    E\left[\int_0^T f(s, X_s)dW_s\right] = 0\\
+    E\left[(\int_0^T f(s, X_s)dW_s)^2\right] = \int_0^T E\left[f^2(s, X_s) \right]ds
+\end{align*}
+
+\subsection{Existence and Uniqueness of Solutions}
+A sufficient condition for the existence and uniqueness of solutions to the SDE:
+\begin{align*}
+    dX_t = \mu(t, X_t)dt + \sigma(t, X_t)dW_t
+\end{align*}
+is that $\mu$ and $\sigma$ are measurable, Lipschitz continuous in $x$ and locally bounded in $t$.\\
+This is known as the \textbf{Kunita-Watanabe Theorem}.\\
+More formally, we need Global Lipschitz Continuity for some K:
+\begin{align*}
+    |\mu(t, x) - \mu(t, y)| + |\sigma(t, x) - \sigma(t, y)| \leq K|x-y| \; \forall x, y \in \mathbb{R}, \; \forall t \in [0, T] \\
+\end{align*}
+and Local Boundedness / Linear Growth for some K:
+\begin{align*}
+    |\mu(t, x)| + |\sigma(t, x)| \leq K(1 + |x|) \; \forall x \in \mathbb{R}, \; \forall t \in [0, T]
+\end{align*}
+
+\subsection{It\^{o}'s Formula}
+\begin{theorem}[It\^{o}'s Formula]
+Let $X_t$ be a stochastic process satisfying the SDE:
+\begin{align*}
+    dX_t = \mu(t, X_t)dt + \sigma(t, X_t)dW_t
+\end{align*}
+and let $f(t, x)$ be a function of class $C^{2, 1}$, i.e. $f$ is twice continuously differentiable in $x$ and once continuously differentiable in $t$.\\
+Then, the process $Y_t = f(t, X_t)$ satisfies the SDE:
+\begin{align*}
+    dY_t = \frac{\partial f}{\partial t} dt + \frac{\partial f}{\partial x} dX_t + \frac{1}{2} \frac{\partial^2 f}{\partial x^2} dX_t^2
+\end{align*}
+Or equivalently:
+\begin{align*}
+    dY_t = \left(\frac{\partial f}{\partial t} + \mu \frac{\partial f}{\partial x} + \frac{1}{2} \sigma^2 \frac{\partial^2 f}{\partial x^2}\right)dt + \sigma \frac{\partial f}{\partial x}dW_t
+\end{align*}
+Where we note that
+\begin{align*}
+    dt^2 = 0\\
+    dt \cdot dW_t = 0\\
+    dW_t^2 = dt
+\end{align*}
+\end{theorem}
+
+
+
+

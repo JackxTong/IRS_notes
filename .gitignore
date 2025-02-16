@@ -10,3 +10,5 @@
 *.synctex.gz
 *.toc
 *.blg
+*.DS_Store
+*.bbl-SAVE-ERROR

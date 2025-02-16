@@ -1,4 +1,5 @@
-\section{Zero Coupon Bonds}
+\section{Interest Rate Products}
+\subsection{Zero Coupon Bonds}
 \begin{definition}
     A \textbf{stochastic discount factor} $D(t, T)$ is the price at time t of receiving 1 at time T.
 
@@ -83,7 +84,7 @@ $$
 Basically, we use the LIBOR rate for expiry within one year, and the annual spot rate for long term rates.
 \end{definition}
 
-\section{Forward Rate Agreement}
+\subsection{Forward Rate Agreement}
 
 \begin{definition}
     A \textbf{Forward Rate Agreement} (FRA) is a contract between two parties, where one party pays a fixed interest rate and the other party pays a floating interest rate. The contract is settled at the end of the contract period.
@@ -183,16 +184,18 @@ Recall that at S, the Receiver FRA is worth
 So $ F(t, T, S) $ can be viewed as an estimate for the future spot rate $L(T, S)$, which is random at t.
 
 \begin{definition}
-    The \textbf{Instantaneous Forward Rate} $f(t, T)$ is the rate that pays interest from T to T + dt, computed by taking the following limit \\
+    The \textbf{Instantaneous Forward Rate} $f(t, T)$ is the estimated rate to be paid from T to T + dt, 
+    computed by taking the following limit \\
     \begin{align*}
-        F(t, T) =& \lim_{\tau \to 0} F(t, T, T + \tau) = \lim_{\tau \to 0} \frac{P(t, T) - P(t, T + \tau)}{P(t, T + \tau) \cdot \tau} \\
+        f(t, T) =& \lim_{\tau \to 0} F(t, T, T + \tau) = \lim_{\tau \to 0} \frac{P(t, T) - P(t, T + \tau)}{P(t, T + \tau) \cdot \tau} \\
         =& \lim_{\tau \to 0} -\frac{1}{P(t, T + \tau)} \cdot \frac{P(t, T + \tau) - P(t, T)}{\tau}  \\
         =& -\frac{1}{P(t, T)} \cdot \frac{\partial}{\partial T} P(t, T) \\
         =& -\frac{\partial}{\partial T} \log P(t, T)
     \end{align*}
+    This can be viewed as an estimate for the future short rate $r(T)$, which is random at t.
 \end{definition}
 
-\section{Interest Rate Swaps}
+\subsection{Interest Rate Swaps}
 \begin{definition}
     An \textbf{Interest Rate Swap} is a contract between two parties, where FRA are exchanged at future dates $T_{\alpha}, T_{\alpha+1}, \dots, T_{\beta}$.\\
     We define the time intervals $\tau = (\tau_{\alpha+1}, \dots, \tau_{\beta})$, where $\tau_i = T_{i} - T_{i-1}$.\\
@@ -220,3 +223,150 @@ So $ F(t, T, S) $ can be viewed as an estimate for the future spot rate $L(T, S)
     
     
 \end{definition}
+
+Again we plug in RFS(K) = 0 to get the fair rate K, or the \textbf{Forward Swap Rate}:
+\begin{align*}
+    \sum_{i = \alpha + 1}^{\beta} \tau_i P(t, T_i)  K  = P(t, T_{\alpha}) - P(t, T_{\beta})\\
+    \Rightarrow K = \frac{P(t, T_{\alpha}) - P(t, T_{\beta})}{\sum \tau_i \cdot P(t, T_i)}
+\end{align*}
+
+\begin{definition}
+    The \textbf{Forward Swap Rate} $S_{\alpha, \beta}(t)$ is the rate that makes the interest rate swap a fair contract:
+    \begin{align*}
+        S(t) = \frac{P(t, T_{\alpha}) - P(t, T_{\beta})}{\sum \tau_i \cdot P(t, T_i)}
+    \end{align*}
+\end{definition}
+
+Like before, we can rewrite the Receiver Swap (3.2):
+\begin{align*}
+    \text{RFS(t)} =& N \Big( \sum \tau_i P(t, T_i)  K - \big(P(t, T_{\alpha}) - P(t, T_{\beta})\big) \Big) \notag \\
+    =& N  \sum \tau_i P(t, T_i) \Big( K - \frac{P(t, T_{\alpha}) - P(t, T_{\beta})}{\sum \tau_i \cdot P(t, T_i)} \Big) \notag \\
+    =& N  \sum \tau_i P(t, T_i) \Big( K - S(t) \Big)
+\end{align*}
+
+\subsection{Caps/Floors}
+\begin{definition}
+    A \textbf{Caplet} is a European call options on interest rate from $T_{i-1}$ to $T_i$, with payoff at $T_i$ given by
+    \begin{align*}
+        N \cdot \tau_i \left( L(T_{i-1}, T_i) - K \right)^+
+    \end{align*}
+    And a \textbf{Cap} is simply a sum of Caplets:
+    \begin{align*}
+        N \sum_{i = \alpha + 1}^{\beta} \tau_i \left( L(T_{i-1}, T_i) - K \right)^+
+    \end{align*}
+    
+    We discount each payment back to t with  $D(t, T_i)$, and take the expectation under Q to price it at t:
+    \begin{align}
+        \text{Cap(t)} =& E_Q\left[ N \sum_{i = \alpha + 1}^{\beta} \tau_i \cdot D(t, T_i) \cdot \left( L(T_{i-1}, T_i) - K \right)^+ \right]  \\
+        =& N \sum_{i = \alpha + 1}^{\beta} \tau_i \cdot P(t, T_i) \cdot Caplet(t, T_{i-1}, T_i, \tau_i, K)
+    \end{align}
+\end{definition}
+
+To price the Caplet, we need to use Black's formula
+\begin{align*}
+    Caplet = Black(K, F, \sigma) = F \phi(d_1) - K \phi(d_2)\\
+    d_1 = \frac{\text{ln}(F/K) + \frac{\sigma^2 T_{i-1}}{2}}{\sigma \sqrt{T_{i-1}}}\\
+    d_2 = \frac{\text{ln}(F/K) - \frac{\sigma^2 T_{i-1}}{2}}{\sigma \sqrt{T_{i-1}}}\\
+    \text{Cap(t)} = N \sum_{i = \alpha + 1}^{\beta} \tau_i \cdot P(t, T_i) \cdot Black(K, F(t,T_{i-1}, T_i) , \sigma)
+\end{align*}
+Here $\sigma$ is the implied volatility retrived from market quotes in [$T_\alpha, T_\beta$], and $F(t,T_{i-1}, T_i)$ is the forward rate.
+
+Similarly for \textbf{Floorlet}, or the put option:
+\begin{align*}
+    Floorlet = Black(K, F, \sigma) = - F \phi(-d_1) + K \phi(-d_2)
+\end{align*}
+
+Recall the standard Black-Scholes:
+\begin{align*}
+    C =& S_0 N(d_1) - K e^{-rT} N(d_2), \\
+    P =& K e^{-rT} N(-d_2) - S_0 N(-d_1),\\
+d_1 =& \frac{\ln \left( \frac{S_0}{K} \right) + \left( r + \frac{\sigma^2}{2} \right)T}{\sigma \sqrt{T}},\\
+d_2 =& d_1 - \sigma \sqrt{T}.
+\end{align*}
+
+\begin{remark}
+    A cap is ATM iff its strike is the \textbf{Forward Swap Rate} $S(t)$. \\
+    It is ITM if $ K < S(t) $, and OTM if $ K > S(t) $.
+\end{remark}
+\begin{remark}
+    Similar to Call-Put parity, we have
+    \begin{align*}
+        \text{Caplet}(K) - \text{Floorlet}(K) =& F \phi(d_1) - K \phi(d_2) - ( - F \phi(-d_1) + K \phi(-d_2)) \\
+        =& F - K 
+    \end{align*}
+    Which is the payoff of a single payer FRA\\
+    We notice for ATM Caplet and Floorlet with $K = F(t, T_{i-1}, T_i)$, we have $ Caplet= Floorlet $\\
+    For ATM Cap and Floor with $ K = S(t) $, we have $ Cap = Floor $ \\
+    This is similar to the Call-Put parity, where we have
+    \begin{align*}
+        C - P = S_0 - K e^{-rT}
+    \end{align*}
+    And when $K = S_0 e^{rT}$, we have $C = P$.
+\end{remark}
+
+\subsection{Swaptions}
+To price swaptions, note that the market Black's formula for
+caplets/floorlets, consistent with the LMM, is not consistent with the
+market Black's formula for swaptions, which is consistent with the
+SMM.
+
+To price swaptions under LMM, one has to use Monte Carlo simulations
+
+\subsubsection{Swap Market Model}
+SWAPTIONS can be managed well in the LIBOR model only through
+approximations like drift freezing. To properly deal with swaptions, one
+would have to use the SMM
+
+Recall payoff of swaption at $T_\alpha$ is
+\begin{align*}
+    (S_{\alpha, \beta} (T_\alpha) - K )^+ \sum_i \tau_i P(T_\alpha, T_i)
+\end{align*}
+
+To price it at $ t= 0 $, we add a discount factor $e^{-T_\alpha}$, 
+and take risk-neutral expectation:
+\begin{align*}
+    E_Q \left[ (S_{\alpha, \beta} (T_\alpha) - K )^+ \sum_i \tau_i P(T_\alpha, T_i) 
+    \frac{B_0}{B_{T_\alpha}} \right]
+\end{align*}
+
+We choose the numeraire $ C_{\alpha, \beta} (t) $ as:
+\begin{align*}
+    C_{\alpha, \beta} (t) = \sum_i \tau_i P(t, T_i)
+\end{align*}
+
+with the related measure be $ Q^{\alpha, \beta}$, under which
+any price process divided by $ C_{\alpha, \beta} (t) $ is a martingale
+
+We note that in this case, the forward swap rate
+$  S_{\alpha, \beta} (t) $ is a martingale:
+\begin{align*}
+    S(t) =& \frac{P(t, T_{\alpha}) - P(t, T_{\beta})}{\sum \tau_i \cdot P(t, T_i)}\\
+    =& \frac{P(t, T_{\alpha}) - P(t, T_{\beta})}{C_{\alpha, \beta} (t)}
+\end{align*}
+SO that it has zero drift GBM under $ Q^{\alpha, \beta}$:
+\begin{align*}
+    dS(t) = \sigma S(t) dW_t^{\alpha, \beta}
+\end{align*}
+Applying change of numeraire:
+\begin{align*}
+    E_Q \left[ (S_{\alpha, \beta} (T_\alpha) - K )^+ C_{\alpha, \beta} (T_\alpha) 
+    \frac{B_0}{B_{T_\alpha}} \right] 
+    =& E_{Q_{\alpha, \beta}} \left[ (S_{\alpha, \beta} (T_\alpha) - K )^+ C_{\alpha, \beta} (T_\alpha) 
+    \frac{C_0}{C_{\alpha, \beta} (T_\alpha)} \right]\\
+    =& C_{\alpha, \beta} (0) E_{Q_{\alpha, \beta}} \left[ (S_{\alpha, \beta} (T_\alpha) - K )^+ \right]
+\end{align*}
+
+Under this setting, we can simply apply Black's formula:
+\begin{align*}
+    Swaption(0) = Black(S, F, \sigma) = 
+    C_{\alpha, \beta}(0) \bigg[S_{\alpha, \beta}(0) \phi(d_1) - K \phi(d_2)\bigg]\\
+    = \sum_i \tau_i P(0, T_i) \bigg(S_{\alpha, \beta}(0) \phi(d_1) - K \phi(d_2)\bigg)
+\end{align*}
+
+\begin{remark}
+    SMM is the only model that is consistent with this market formula.
+
+    LMM is not compatible with the Black formula for Swaptions.
+\end{remark}
+
+\subsection{Swaption Under LMM}
