@@ -120,12 +120,24 @@ We solve
     e^{r} =& U q^+ + D (1-q^+) 
 \end{align*}
 And we get $ q^+ = \frac{e^r - D}{U - D}$, $ q^- = \frac{U - e^r}{U - D}$ \\
-
+This is solvable iff $U > e^r > D$.\\
 \begin{example}
     If a stock is at 100, can move to 90 or 120 in a year, with r = 0\\
     Real world probability of moving up or down is not important.
     Under Q, we have $q^+ = \frac{e^0 - 0.9}{1.2 - 0.9} = \frac{1}{3}$, 
     $q^- = \frac{1 - e^0}{1.2 - 0.9} = \frac{2}{3}$
+\end{example}
+
+\begin{example}
+    We give a counterexample when $U > e^r > D$ does not hold.\\
+    Consider a stock at 1, can move up to 3 or stay at 1.\\
+    The risk free rate is 0.\\
+    We have $q^+ = \frac{e^0 - 1}{3 - 1} = 0$, so 
+    \begin{align*}
+        call = 0 \cdot 2 + 1 \cdot 0 = 0
+    \end{align*}
+    Or we can buy infinite amount of calls on a stock with positive 
+    probability of going up.
 \end{example}
 
 \subsubsection{Trinomial Model}

@@ -1,0 +1,90 @@
+\section{One Factor Short Rate Models}
+\subsection{Vasicek Model}
+\begin{align*}
+dr_t &= k(\theta-r_t)dt + \sigma dW_t\\
+r_t &= r_0 e^{-kt} + \theta(1-e^{-kt}) + \sigma e^{-kt} \int_0^t e^{ks} dW_s
+\end{align*}
+We know that $k$ is speed of mean reversion, 
+$\theta$ is the long term mean, and $\sigma$ is the volatility of the short rate.
+
+The drift term $k(\theta-r_t)dt$ is linear in $r_t$, 
+and the diffusion term $\sigma dW_t$ is linear in $dW_t$, suggesting 
+the rates is normally distributed, meaning it can go negative.\\
+To compute the variance:
+\begin{align*}
+Var(r_t) &= Var\left(\sigma e^{-kt} \int_0^t e^{ks} dW_s\right)\\
+&= E\left[\left(\sigma \int_0^t e^{k(t-s)} dW_s\right)^2\right] 
+- E\left[\sigma \int_0^t e^{k(t-s)} dW_s\right]^2\\
+&= \sigma^2 \int_0^t e^{2k(t-s)} ds - 0\\
+&= \frac{\sigma^2}{2k}(1-e^{-2kt})
+\end{align*}
+
+So we have $ r_t \sim N\left(A, B\right)$, where
+\begin{align*}
+    A =& r_0 e^{-kt} + \theta(1-e^{-kt}), \\
+    B =& \frac{\sigma^2}{2k}(1-e^{-2kt})
+\end{align*}
+
+We can see that as $ t \to \infty$, $ A \to \theta$, 
+and $ B \to \frac{\sigma^2}{2k}$,\\
+i.e. for larger $k$, the convergence is faster,
+and smaller volatiltiy in the long run.\\
+
+More generally, this is a special case of the Ornstein-Uhlenbeck process,
+\begin{align*}
+dx_t &= \alpha(\mu-x_t)dt + \sigma_t dW_t
+\end{align*}
+where $x_t$ is the state variable, $\alpha$ is the speed of mean reversion.\\
+
+Some of the problems with this model are:
+\begin{itemize}
+    \item The short rate can go negative,
+    \item Gaussian has thinner tails than market implied distributions, 
+    \item The model is endogenous, meaning it cannot reproduce the yield curve.
+\end{itemize}
+The CIR model is an improvement on the first two points.\\
+To solve the third point, we can develop an exogenous model by making
+$\theta$ a function of time, $\theta(t)$, i.e.
+\begin{align*}
+    dr_t &= k(\theta_t-r_t)dt + \sigma dW_t
+\end{align*}
+So we arrived with the one-factor Hull-White model.\\
+
+\subsection{CIR Model}
+For $r_0 > 0$, 
+\begin{align*}
+dr_t &= k(\theta-r_t)dt + \sigma \sqrt{r_t} dW_t
+\end{align*}
+ensures positive interest rates with the Feller condition $2k\theta > \sigma^2$, 
+(otherwise hits 0).\\
+Again we compute the mean and variance:
+\begin{align*}
+    E[r_t] = r_0 e^{-kt} + \theta(1-e^{-kt})\\
+    Var(r_t) = \frac{\sigma^2}{2k}(1-e^{-2kt})\theta + 
+    r_0 e^{-kt}\frac{\sigma^2}{k}(1-e^{-kt})
+\end{align*}
+
+In this case $r_t$ has a non-central chi-squared distribution, 
+has fatter tails than Gaussian, hence closer to market implied distributions.\\
+It is less tractable, especially in in multi-factor extensions,
+where we need to add correlation between the factors.\\
+
+A problem still, is that Gaussian distributions for the rates are not compatible with the market
+implied distributions as they have tails that are too thin.\\
+
+In particular, both models are affine models.
+\begin{align*}
+    P(t, T) = A(t, T) e^{-B(t, T)r_t}
+\end{align*}
+
+Additionally, we work out the continuously compounded spot rate $R(t, T)$,\\
+So
+\begin{align*}
+    R(t, T) = -\frac{\ln P(t, T)}{T-t} \\
+    = - \frac{\ln A(t, T)}{T-t} - \frac{\ln e^{-B(t, T)r_t}}{T-t}\\
+\end{align*}
+So $R$ is an affine transformation of $r_t$.\\
+This suggests perfect terminal correlation:
+\begin{align*}
+    \text{Corr}(R(t, T_1), R(t, T_2)) = 1
+\end{align*}

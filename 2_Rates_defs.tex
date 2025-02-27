@@ -4,13 +4,13 @@
     A \textbf{stochastic discount factor} $D(t, T)$ is the price at time t of receiving 1 at time T.
 
     Consider a deterministic bond $B_t$ with 
-    \begin{equation}
+    \begin{align*}
         dB_t = r_t B_t dt
-    \end{equation}
+    \end{align*}
     then clearly
-    \begin{equation}
+    \begin{align*}
         B_t = B_0 \cdot e^{\int_{0}^{t} r_s ds} 
-    \end{equation}
+    \end{align*}
     letting $B_T = 1$, we have $ B_0 = e^{-\int_{0}^{T} r_s ds} = D(0, T)$, so the stochastic discount factor is the price of a riskless bond that pays 1 at T.
 \end{definition}
 \begin{definition}
@@ -18,16 +18,18 @@
     WLOG assume the face value is 1, then its price at t is given by
     \begin{equation}
         P(t, T) = E_Q\left[ e^{-\int_{t}^{T} r_t dt }\right] = E_Q\left[ D(t, T) \right]
+        \label{eq:zcb}
     \end{equation}
     where $r_t$ is the short rate at time t, and the expectation is taken with respect to the risk free measure Q.
 
     Note in the case when $r_t$ is constant, we have
-    \begin{equation}
+    \begin{align*}
         P(t, T) = E_Q\left[ e^{-r(T - t)} \right] \\
-        = e^{-r(T - t)}
-    \end{equation}
+        = e^{-r(T - t)} = D(t, T)
+    \end{align*}
 \end{definition}
 
+\subsection{Linear, Compound, Short rates and Annual Spot Rates}
 \begin{definition}
     The \textbf{Spot Linear / Simply Compounded / LIBOR Rate} $L$ is the rate that pays linear interest. \\
     Basically when you pay X, you are supposed to receive $X(1 + L \cdot n)$ after n years \\
@@ -56,6 +58,14 @@
 \end{definition}
 
 \begin{definition}
+With $R(t, T)$, we arrive with the \textbf{short rate} $r_t$:
+\begin{align*}
+    r_t =& \lim_{T \to t} R(t, T) \\
+    =& \lim_{T \to t} \frac{-\log P(t, T)}{T - t} 
+\end{align*}
+\end{definition}
+
+\begin{definition}
     The \textbf{Annual Spot Rate} $Y$ is the rate that pays interest annually. \\
     Pay X at t and receive $X \cdot (1 + Y)^{T - t}$ at T \\
     We again solve
@@ -81,119 +91,236 @@ $$
     Y(t, T), & T > t + 1
 \end{cases}
 $$
-Basically, we use the LIBOR rate for expiry within one year, and the annual spot rate for long term rates.
+Basically, we use the LIBOR rate for expiry within one year, 
+and the annual spot rate for long term rates.
+
+An example of a yield curve in Feb 2025 is given by Figure \ref{fig:yield_curve},
+where we note that the yield initially goes down, but goes up when 
+maturity $>5Y$.\\
+Note the general bond formula for a maturity of N years is given by
+\begin{align*}
+    P(0, N) = \sum_{n=1}^N \frac{C}{(1 + Y)^n} + \frac{F}{(1 + Y)^N}
+\end{align*}
+Where C is the coupon payment, and F is the face value.\\
+For fixed C and F, when price goes down, yield goes up.\\
+The fact that less people demand long term bonds,
+causes the yield to go up, as investors expect rates to go up in the long run, 
+hence demand higher yield for long term bonds.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{plots/yield_curve.png}
+    \caption{Yield Curve}
+    \label{fig:yield_curve}
+\end{figure}
 \end{definition}
 
-\subsection{Forward Rate Agreement}
+\subsection{Forward Rate}
 
-\begin{definition}
     A \textbf{Forward Rate Agreement} (FRA) is a contract between two parties, where one party pays a fixed interest rate and the other party pays a floating interest rate. The contract is settled at the end of the contract period.
-    As we consider at t, the FRA(T, S) is a contract that starts at T and ends at S. The fixed rate is agreed at T, and settled at S. \\
-    For the period (T, S), the holder of the \textbf{Payer FRA} pays fixed $K \cdot (S - T)$ and receives floating $L(T, S) \cdot (S - T)$. \\
-    The holder of the \textbf{Receiver FRA} has the opposite payoff, with payoff at S given by
+    
+    As we consider at \(t\), the \(\mathrm{FRA}(T_1, T_2)\) is a contract that starts at \(T_1\) and ends at \(T_2\). The fixed rate is agreed at \(T_1\), and settled at \(T_2\). \\
+    For the period \(\bigl(T_1, T_2\bigr)\), the holder of the \textbf{Payer FRA} pays fixed \(K \cdot \bigl(T_2 - T_1\bigr)\) and receives floating \(L(T_1, T_2) \cdot \bigl(T_2 - T_1\bigr)\). \\
+    The holder of the \textbf{Receiver FRA} has the opposite payoff, with payoff at \(T_2\) given by
+    \[
+       \bigl(K - L(T_1, T_2)\bigr)\,\bigl(T_2 - T_1\bigr)\,N,
+    \]
+    where N is the notional amount, and we denote \(\tau = T_2 - T_1\).\\
+    Holding 1 at \(T_2\) is equivalent to holding \(P(T_1, T_2)\) at \(T_1\), 
+    and holding \(P(t, T_1) P(T_1, T_2)\) at \(t\).\\
+    So we can use \(P(t, T_1)\,P(T_1, T_2)\) as the discount factor from \(T_2\) to \(t\).\\
+    Note that \(P(T_1, T_2)\) is random at \(t\), and is denoted as 
+    the \textbf{Forward Price} \(P(t, T_1, T_2)\) \\
+    Recall that we have
     \begin{align*}
-        (K - L(T, S)) \cdot (S - T) \cdot N
+        P(T_1, T_2) \bigg( 1 + L(T_1, T_2) \tau  \bigg) = 1 \\
+        L(T_1, T_2) = \frac{1}{\tau} \left( \frac{1}{P(T_1, T_2)} - 1 \right) 
     \end{align*}
-    where N is the notional amount.\\
-    We denote $\tau = S - T$.\\
-    We discount this back to t with the factor D(t, S), and take the expectation under Q to get the price it at t:
+    Where $P(T_1, T_2)$ is random at t.\\
+    Note that we have $D(T_1, T_2) = D(t, T_2) / D(t, T_1)$, but the same doesn't
+    hold for the zero coupon bond price $P$. \\
+    Nevertheless to price the FRA, we estimate $P(T_1, T_2)$ with $P(t, T_1) P(T_1, T_2)$,
+    and have
+    \begin{align*}
+        \hat{L}(T_1, T_2)
+        = \frac{1}{\tau} \left( \frac{P(t, T_1)}{P(t, T_2)} - 1 \right) 
+    \end{align*}
+    \begin{definition}
+    To make the FRA fair, we need 
     \begin{align}
-        \text{Receiver FRA(t)} =& N \cdot E_Q\left[ D(t, S) \cdot (K - L(T, S)) \cdot (S - T) \right] \notag \\
-        =& N \tau \cdot E_Q\left[ D(t, S) \cdot (K - L(T, S)) \right]\\
-        =& N (\tau K \cdot P(t, S) - P(t, T) + P(t, S)) 
+        K \;=\; \hat{L}(T_1, T_2) \;=\; \frac{1}{\tau} \left( \frac{P(t, T_1)}{P(t, T_2)} - 1 \right).
+        \label{eq:forward_rate}
+    \end{align}
+    Which is computable (non-random) at \(t\).\\
+    This is the \textbf{Forward Linear Rate} $ F(t, T_1, T_2) $.\\
+
+    \begin{remark}
+        \begin{align*}
+            P(t, T_1) P(T_1, T_2) = E[D(t, T_1)] E[ D(T_1, T_2)] \neq
+            E[D(t, T_1) D(T_1, T_2)] = E[D(t, T_2)] = P(t, T_2)
+        \end{align*}
+        As we have no evidence that $D(t, T_1)$ and $D(T_1, T_2)$ are uncorrelated.
+    \end{remark}
+    \end{definition}
+    \begin{definition}
+    Similarly, we can define the \textbf{Forward Compound Rate} $ R(t, T_1, T_2) $ :\\
+    By letting $ K = R(T_1, T_2) $ instead of $ K = L(T_1, T_2) $\\
+    Recall
+    \begin{align*}
+        R(T_1, T_2) = \frac{\,-\log P(T_1, T_2)\,}{\,T_2 - T_1\,}
+    \end{align*}
+    Writing $ -\log P(T_1, T_2) = -\log P(t, T_1) + \log P(t, T_2) $, we have
+    \begin{align}
+        R(t, T_1, T_2) \;=\; \frac{\,-\log P(t, T_1) + \log P(t, T_2)\,}{\,T_2 - T_1\,}.
+    \label{eq:forward_compound_rate}
+    \end{align}
+    \end{definition}
+    But we continue with the linear / LIBOR rate for now.
+
+    \subsection{FRA}
+    Note we derived the forward linear and compound rate above informally,
+    by plugging in $P(t, T_1) P(T_1, T_2)$ for $P(t, T_2)$ in the definition of $L(T_1, T_2)$.\\
+    This is not rigorous, so we formally derive the price of FRA below,
+    and derive the forward rate by setting FRA to 0.
+    \begin{definition}
+        Assume N = 1. The payoff of the \textbf{Receiver FRA}($t, T_1, T_2$) at \(T_2\)
+        is $\tau \, \bigl(K - L(T_1, T_2)\bigr) $\\
+        To price it at $t$, we discount the payoff with the factor \(D(t, T_2)\), 
+        and take the expectation under \(Q\)
+    \begin{align*}
+        \mathrm{Receiver\;FRA}(t) 
+          &= \tau\; E_Q\bigl[\,D(t, T_2)\,\bigl(K - L(T_1, T_2)\bigr)\bigr]\\
+          &= \tau\,K\,E_Q\bigl[\,D(t, T_2)\bigr] - \tau\,E_Q\bigl[\,D(t, T_2)\,L(T_1, T_2)\bigr]\\
+          &= \tau\,K\,P\bigl(t, T_2\bigr) - \tau\,E_Q\bigl[\,D(t, T_2)\,L(T_1, T_2)\bigr]
+    \end{align*}
+    We note that the second term:
+    \begin{align*}
+        \tau\, E_Q\bigl[\,D(t, T_2)\,L(T_1, T_2)\bigr]
+        &= \tau\, E_Q\bigl[\,D(t, T_1) D(T_1, T_2)\,L(T_1, T_2)\bigr]\\
+        &= \tau\, E_Q\bigl[ E_T[ D(t, T_1) D(T_1, T_2)\,L(T_1, T_2) ]\bigr]
+    \end{align*}
+    Where we denote $E_T$ as the expectation taken at $T_1$, 
+    (i.e. with the filtration $\mathcal{F}_{T_1}$).\\
+    We note that at $T_1$, $D(t, T_1)$ and $L(T_1, T_2)$ are non-random.
+    Therefore
+    \begin{align*}
+        \tau\, E_Q\bigl[\,D(t, T_2)\,L(T_1, T_2)\bigr]
+        &= \tau\, E_Q\bigl[ D(t, T_1) L(T_1, T_2) E_T[ D(T_1, T_2) ]\bigr]\\
+        &= \tau\, E_Q\bigl[ D(t, T_1) L(T_1, T_2) P(T_1, T_2)\bigr]\\
+        &= \tau\, E_Q\bigl[ D(t, T_1) \frac{1}{\tau} 
+        \left( \frac{1}{P(T_1, T_2)} - 1 \right) P(T_1, T_2)\bigr]\\
+        &= E_Q \bigl[ D(t, T_1) \left( 1 - P(T_1, T_2) \right) \bigr]\\
+        &= P(t, T_1) - E_Q \bigl[ D(t, T_1) P(T_1, T_2) \bigr]
+    \end{align*}
+    Again, note that the second term
+    \begin{align*}
+        E_Q \bigl[ D(t, T_1) P(T_1, T_2) \bigr]
+        &= E_Q \bigl[ D(t, T_1) E_{T_1} [  D(T_1, T_2) ] \bigr]\\
+        &= E_Q \bigl[ E_{T_1} [ D(t, T_1) D(T_1, T_2) ] \bigr]\\
+        &= E_Q \bigl[ D(t, T_2) \bigr] \\
+        &= P(t, T_2)
+    \end{align*}
+    So we end up with 
+    \begin{align}
+        \mathrm{Receiver\;FRA}(t) 
+        &= \tau\,K\,P\bigl(t, T_2\bigr) - P(t, T_1) + P(t, T_2) \label{eq:fra}
     \end{align}
 \end{definition}
-    \begin{proof}
-    Note we showed the spot rate $L(T, S)$ is given by
-    $$
-        L = \frac{1 - P}{P \cdot (T - t)}
-    $$
-    In this case
-    $$
-        L(T, S) = \frac{1 - P(T, S)}{P(T, S) \cdot \tau}
-    $$
-    At S, the Receiver FRA is worth 
-    \begin{align*}
-        N \cdot \tau \cdot (K - L(T, S))  
-        =& N \cdot \tau \cdot (K - \frac{1 - P(T, S)}{P(T, S) \cdot \tau}) \\
-        =& N \cdot \tau \cdot (K - \frac{1}{P(T, S) \cdot \tau} + \frac{1}{\tau}) \\
-        =& N (\tau K - \frac{1}{P(T, S)} + 1)
-    \end{align*}
-    Note holding $P(T, S)$ at T is equivalent to holding 1 at S, so we can use $P(T, S)$ as the discount factor from S to T.\\
-    Similarly, holding $P(t, T)$ at T is equivalent to holding 1 at T, so we can use $P(t, T) P(T, S)$ as the discount factor from S to t.\\
-    At t, the Receiver FRA is multiplied by the discount factor $P(t, S) = P(t, T) P(T, S)$:
-    \begin{align*}
-        P(t, S) N (\tau K - \frac{1}{P(T, S)} + 1) \\
-        = N (\tau K \cdot P(t, S) - P(t, T) + P(t, S)) 
-    \end{align*}
-\end{proof}
 
-To make the FRA a fair contract, we should make the price of the Receiver FRA equal to 0 at t.\\
-We solve FRA(K) = 0 to get the fair rate K:
-\begin{align*}
-    N (\tau K \cdot P(t, S) - P(t, T) + P(t, S)) = 0 \\
-    \Rightarrow K = \frac{P(t, T) - P(t, S)}{\tau \cdot P(t, S)}
-\end{align*}
-
-\begin{definition}
-    The \textbf{Forward Linear Rate} $F(t, T, S)$ is the rate that pays interest from T to S, agreed at time t. \\
-    The forward rate is given by
-    \begin{align*}
-        F(t, T, S) = \frac{P(t, T) - P(t, S)}{P(t, S) \cdot \tau} = K
-    \end{align*}
-\end{definition}
-
-Note in (2.1) and (2.2), we showed
-\begin{equation}
-    \tau \cdot E_Q\left[ D(t, S) \cdot (K - L(T, S)) \right] = \tau K \cdot P(t, S) - P(t, T) + P(t, S) \notag
-\end{equation}
-Where
-\begin{align*}
-    E_Q\left[ D(t, S) \cdot (K - L(T, S)) \right] = K \cdot P(t, S) - E_Q\left[ D(t, S) \cdot L(T, S) \right]
-\end{align*}
-Hence
-\begin{align*}
-    P(t, T) - P(t, S) =& \tau \big( K \cdot P(t, S) - E_Q\left[ D(t, S) \cdot (K - L) \right] \big)\\
-    =& \tau \big( K \cdot P(t, S) - K \cdot P(t, S) + E_Q\left[ D(t, S) \cdot L(T, S) \right] \big)\\
-    =& \tau \cdot E_Q\left[ D(t, S) \cdot L(T, S) \right]
-\end{align*}
-So we have
-\begin{align*}
-    \frac{P(t, T) - P(t, S)}{\tau} = E_Q\left[ D(t, S) \cdot L(T, S) \right]
-\end{align*}
-Note the LHS is also equal to $F(t, T, S) \cdot P(t, S)$, so we have
-\begin{equation}
-    F(t, T, S) \cdot P(t, S) = E_Q\left[ D(t, S) \cdot L(T, S) \right]
-\end{equation}
-Where we had $P(t, S) = E_Q\left[ D(t, S) \right] $, so we know $ F(t, T, S) \neq E_Q\left[ L(T, S) \right] $.\\
-Otherwise we would have $D(t, S)$ and $L(T, S)$ uncorrelated, which is not true.
-
-Note we can rewrite (2.2)
-\begin{align}
-    \text{Receiver FRA(t)} 
-    =& N (\tau K \cdot P(t, S) - P(t, T) + P(t, S)) \notag \\
-    =& N \tau \cdot P(t, S) \left( K - \frac{P(t, T)}{P(t, S) \tau} + \frac{1}{\tau}\right) \notag \\  
-    =& N \tau \cdot P(t, S) \left( K - \frac{P(t, T) - P(t, S)}{P(t, S) \cdot \tau}\right) \notag \\
-    =& N \tau \cdot P(t, S) \left( K - F(t, T, S) \right)
-\end{align}
-And we obviously have Receiver FRA(K = F(t, T, S)) = 0. \\
-Recall that at S, the Receiver FRA is worth 
-\begin{align*}
-    N \tau (K - L(T, S))  
-\end{align*}
-So $ F(t, T, S) $ can be viewed as an estimate for the future spot rate $L(T, S)$, which is random at t.
+We solve FRA(K) = 0, and note that the solution is exactly 
+$K = F(t, T_1, T_2) 
+= \frac{1}{\tau} \left( \frac{P(t, T_1)}{P(t, T_2)} - 1 \right)$:
+\[
+   FRA(K) =  \,\Bigl(\,\tau\,K\,P(t, T_2) - P(t, T_1) + P(t, T_2)\Bigr) = 0
+\]
+\[
+   K = \frac{1}{\tau} \left( \frac{P(t, T_1) - P(t, T_2)}{P(t, T_2)} \right)
+\]
 
 \begin{definition}
     The \textbf{Instantaneous Forward Rate} $f(t, T)$ is the estimated rate to be paid from T to T + dt, 
     computed by taking the following limit \\
     \begin{align*}
         f(t, T) =& \lim_{\tau \to 0} F(t, T, T + \tau) = \lim_{\tau \to 0} \frac{P(t, T) - P(t, T + \tau)}{P(t, T + \tau) \cdot \tau} \\
-        =& \lim_{\tau \to 0} -\frac{1}{P(t, T + \tau)} \cdot \frac{P(t, T + \tau) - P(t, T)}{\tau}  \\
+        =& \lim_{\tau \to 0} -\frac{1}{P(t, T + \tau)} \cdot \frac{P(t, T + \tau) - P(t, T)}{\tau} 
+    \end{align*}
+    We note that both terms in the limit has well defined limits, 
+    so the limit of the product is the product of the limits. So
+    \begin{align*}
+        f(t, T) 
         =& -\frac{1}{P(t, T)} \cdot \frac{\partial}{\partial T} P(t, T) \\
         =& -\frac{\partial}{\partial T} \log P(t, T)
     \end{align*}
     This can be viewed as an estimate for the future short rate $r(T)$, which is random at t.
 \end{definition}
+Note under mild regularity conditions, the instantaneous forward rate should converge to the short rate:
+\begin{align*}
+    r_t =& \lim_{\tau \to 0} f(t, t + \tau) \\
+    =& \lim_{\tau \to 0} -\frac{\partial}{\partial T} \log P(t, T)
+\end{align*}
+While we previously have
+\begin{align*}
+    r_t =& \lim_{\tau \to 0} R(t, t + \tau) \\
+    =& \lim_{\tau \to 0} -\frac{1}{T} \log P(t, T) 
+\end{align*}
+
+Consider a trivial example of a quadratic zero coupon bond.
+\begin{align*}
+    P(0, T) =& e^{-A T^2 -B T - C} 
+\end{align*}
+First we note that we need $P(0, 0) = 1$, so $C = 0$.\\
+Additionally we need $P(0, T) \in [0, 1)$, so $A \geq 0 \, , B \geq 0$.\\
+Then we have
+\begin{align*}
+    R(0, T) =& -\frac{1}{T} (-A T^2 -B T) = A T + B \\
+    r_0 =& R(0, 0) = B
+\end{align*}
+And
+\begin{align*}
+    f(0, T) =& -\frac{\partial}{\partial T} \log P(0, T) = 2 A T + B \\
+    r_0 =& f(0, 0) = B
+\end{align*}
+So in this case, the instantaneous forward rate and continuous Compounded rate
+agrees in the limit to the short rate
+
+\subsection{Remarks: Forward Rate is an biased estimator}
+
+Note in (2.1) and (2.2), we showed
+\[
+    \tau \;E_Q\Bigl[D\bigl(t, T_2\bigr)\,\bigl(K - L(T_1, T_2)\bigr)\Bigr]
+    \;=\; \tau\,K \,P\bigl(t, T_2\bigr) \;-\; P\bigl(t, T_1\bigr) \;+\; P\bigl(t, T_2\bigr).
+\]
+Where
+\[
+    E_Q\Bigl[D\bigl(t, T_2\bigr)\,\bigl(K - L(T_1, T_2)\bigr)\Bigr]
+    = K \,P\bigl(t, T_2\bigr) - E_Q\Bigl[D\bigl(t, T_2\bigr)\,L(T_1, T_2)\Bigr].
+\]
+Hence
+\begin{align*}
+    P\bigl(t, T_1\bigr) - P\bigl(t, T_2\bigr) 
+    =& \tau \Bigl(\,K\,P\bigl(t, T_2\bigr) \;-\; E_Q\bigl[D\bigl(t, T_2\bigr)\,(K - L)\bigr]\Bigr)\\
+    =& \tau \Bigl(K \,P\bigl(t, T_2\bigr) - K\,P\bigl(t, T_2\bigr) 
+    + E_Q\bigl[D\bigl(t, T_2\bigr)\,L(T_1, T_2)\bigr]\Bigr) \\
+    =& \tau\;E_Q\Bigl[D\bigl(t, T_2\bigr)\,L(T_1, T_2)\Bigr]
+\end{align*}
+So we have
+\[
+    \frac{P\bigl(t, T_1\bigr) - P\bigl(t, T_2\bigr)}{\tau}
+    \;=\; E_Q\Bigl[D\bigl(t, T_2\bigr)\,L(T_1, T_2)\Bigr].
+\]
+Note the LHS is also equal to \(F(t, T_1, T_2)\,P(t, T_2)\). Thus
+\[
+    F(t, T_1, T_2)\;P(t, T_2)
+    \;=\; E_Q\Bigl[D\bigl(t, T_2\bigr)\,L(T_1, T_2)\Bigr].
+\]
+Where we had \(P(t, T_2) = E_Q\bigl[D(t, T_2)\bigr]\), so in general \(F(t, T_1, T_2)\neq E_Q\bigl[L(T_1, T_2)\bigr]\). 
+They would only be equal if \(D(t, T_2)\) and \(L(T_1, T_2)\) were uncorrelated, which is not generally true.
+
+Similarly we have that the instantaneous forward rate is an 
+biased estimator for the short rate:
+\begin{align*}
+    f(t, T) \neq E_Q\bigl[r(T)\bigr]
+\end{align*}
 
 \subsection{Interest Rate Swaps}
 \begin{definition}
@@ -204,23 +331,20 @@ So $ F(t, T, S) $ can be viewed as an estimate for the future spot rate $L(T, S)
         N \tau_i (K - L(T_{i-1}, T_i))  
     \end{align*}
     and the  \textbf{Payer Swap (PFS)} has the opposite payoff.\\
-    We discount each payment back to t with  $D(t, T_i)$, and take the expectation under Q to get the price it at t:
+    This is simply a sum of FRAs at each $(T_{i-1}, T_i)$:
     \begin{align}
-        \text{RFS(t)} =& E_Q\left[ N \sum_{i = \alpha + 1}^{\beta} \tau_i \cdot D(t, T_i) \cdot (K - L(T_{i-1}, T_i)) \right]  
+        \text{RFS(t)} =& \sum_{i = \alpha + 1}^{\beta} FRA(t, T_{i-1}, T_i, \tau_i) \notag \\
+        =& \sum_{i = \alpha + 1}^{\beta} \tau_i \cdot P(t, T_i) \left( K - F(t, T_{i-1}, T_i) \right) \notag\\
+        =& \sum_{i = \alpha + 1}^{\beta} \tau_i \cdot P(t, T_i)
+        \left( K - \frac{P(t, T_{i-1}) - P(t, T_i)}{P(t, T_i) \cdot \tau_i}\right) \notag
     \end{align}
-
-    We can also view it as a sum of Receiver FRA, so we can plug in (2.4) and have
+    Note that this is equivalent to plugging in the sum of FRA prices: \eqref{eq:fra}
     \begin{align}
-        \text{RFS(t)} =& \sum_{i = \alpha + 1}^{\beta} FRA(t, T_{i-1}, T_i, \tau_i, N) \notag \\
-        =& N \sum_{i = \alpha + 1}^{\beta} \tau_i \cdot P(t, T_i) \left( K - F(t, T_{i-1}, T_i) \right) \notag\\
-        =& N \sum_{i = \alpha + 1}^{\beta} \tau_i \cdot P(t, T_i)\left( K - \frac{P(t, T_{i-1}) - P(t, T_i)}{P(t, T_i) \cdot \tau_i}\right) \notag\\
-        =& N \sum_{i = \alpha + 1}^{\beta} \Big( \tau_i P(t, T_i)  K - P(t, T_{i-1}) + P(t, T_i) \Big) \notag\\
-        =& N \Big( \sum_{i = \alpha + 1}^{\beta} \tau_i P(t, T_i)  K - P(t, T_{\alpha}) + P(t, T_{\beta}) \Big) 
+        \text{RFS(t)}
+        =& \sum_{i = \alpha + 1}^{\beta} \Big( \tau_i P(t, T_i) K - P(t, T_{i-1}) + P(t, T_i) \Big) \notag\\
+        =& \Big( \sum_{i = \alpha + 1}^{\beta} \tau_i P(t, T_i) K \Big) - P(t, T_{\alpha}) + P(t, T_{\beta}) 
+        \label{eq:IRS}
     \end{align}
-    
-    
-    
-    
     
 \end{definition}
 
@@ -237,12 +361,25 @@ Again we plug in RFS(K) = 0 to get the fair rate K, or the \textbf{Forward Swap 
     \end{align*}
 \end{definition}
 
-Like before, we can rewrite the Receiver Swap (3.2):
+The Receiver Swap \eqref{eq:IRS} can be rewritten as:
 \begin{align*}
     \text{RFS(t)} =& N \Big( \sum \tau_i P(t, T_i)  K - \big(P(t, T_{\alpha}) - P(t, T_{\beta})\big) \Big) \notag \\
-    =& N  \sum \tau_i P(t, T_i) \Big( K - \frac{P(t, T_{\alpha}) - P(t, T_{\beta})}{\sum \tau_i \cdot P(t, T_i)} \Big) \notag \\
     =& N  \sum \tau_i P(t, T_i) \Big( K - S(t) \Big)
 \end{align*}
+
+\begin{remark}
+    Note that $S_{\alpha, \beta}(t)$ is simply a weighted average of the forward rates:
+    \begin{align*}
+        S(t) = \sum w_i F_i
+    \end{align*}
+    Where 
+    \begin{align*}
+        w_i =& \frac{\tau_i P(t, T_i)}{\sum \tau_i P(t, T_i)} \\
+        F_i =& F(t, T_{i-1}, T_i) = \frac{P(t, T_{i-1}) - P(t, T_i)}{\tau_iP(t, T_i)}
+    \end{align*}
+    
+\end{remark}
+
 
 \subsection{Caps/Floors}
 \begin{definition}
@@ -258,7 +395,7 @@ Like before, we can rewrite the Receiver Swap (3.2):
     We discount each payment back to t with  $D(t, T_i)$, and take the expectation under Q to price it at t:
     \begin{align}
         \text{Cap(t)} =& E_Q\left[ N \sum_{i = \alpha + 1}^{\beta} \tau_i \cdot D(t, T_i) \cdot \left( L(T_{i-1}, T_i) - K \right)^+ \right]  \\
-        =& N \sum_{i = \alpha + 1}^{\beta} \tau_i \cdot P(t, T_i) \cdot Caplet(t, T_{i-1}, T_i, \tau_i, K)
+        =& N \sum_{i = \alpha + 1}^{\beta} \tau_i \cdot P(t, T_i) \cdot Caplet(T_i, \tau_i, K)
     \end{align}
 \end{definition}
 

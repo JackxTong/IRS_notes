@@ -1,0 +1,24 @@
+\section{Libor Market Models}
+\label{sec:4_LMM}
+\subsection{Forward Measures}
+We recall that the risk neutral measure $Q$ is using 
+the money market account $B_t = e^{rt}$ as numeraire.\\
+
+\begin{definition}
+    \textbf{T-Forward Measure}\\
+    Let $T > t$ be a fixed time horizon. The forward measure 
+    $\mathbb{Q}^{T}$ uses the zero-coupon bond $P(t, T)$ as numeraire.\\
+    i.e. Let $S_t$ be some price process,
+    then $S_t / P(t, T)$ is a $\mathbb{Q}^{T}$-martingale.
+    \begin{align*}
+        \frac{S_t}{P(t, T)} = \mathbb{E}^{\mathbb{Q}^{T}}
+        \left[ \frac{S_T}{P(T, T)} \Big| \mathcal{F}_t \right]
+        = \mathbb{E}^{\mathbb{Q}^{T}} 
+        \left[ S_T \Big| \mathcal{F}_t \right]
+    \end{align*}
+    We can also use $E_t^T$ to denote the expectation at $t$
+    under $\mathbb{Q}^{T}$, then 
+    \begin{align*}
+        V(t) = E_t^T[V(T)] P(t, T)
+    \end{align*}
+\end{definition}

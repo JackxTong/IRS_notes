@@ -1,0 +1,46 @@
+\section{Post-LIBOR}
+\subsection{Libor Scandal}
+In early 2010s, banks like Barclays, UBS, and RBS were found to have manipulated the LIBOR rate.\\
+A team within a bank's Treasury or Money Market Desk should independently estimate the rate
+at which they can borrow from other banks, without influence from the trading desk.\\
+The LIBOR rate is the average of the rates submitted by the banks, 
+excluding the highest and lowest 25\% of the submissions.\\
+Traders were found to influence the submitters and help out each other,
+by submitting lower rates to make them look stronger (when they can't borrow at that rate),
+or higher rates when they hold payer IRS (and receive $L - K$).\\
+
+By the 2010s, the volume of unsecured interbank lending had shrunk significantly.
+Banks were borrowing less from each other because:\\
+Post-2008 regulations (Basel III) discouraged excessive interbank lending.\\
+Banks relied more on secured funding (repo markets) rather than unsecured loans.\\
+By the time regulators pushed for actual loan-based LIBOR submissions, 
+there were only a few billion dollars of daily transactions,
+not reliable enough to serve as the benchmark
+for hundreds of trillions of dollars worth of financial products that it should.\\
+
+In 2017, the FCA announced that LIBOR would be phased out by 2021,
+and replaced by the SONIA rate in the UK, and the SOFR rate in the US.
+
+\begin{itemize}
+    \item US: The Secured Overnight Financing Rate (SOFR) 
+    \item UK: The Sterling Overnight Index Average (SONIA)
+    \item Eurozone: The Euro Short-Term Rate (ESTR) and EURIBOR continues to be used
+\end{itemize}
+
+Based on those rates, the new IRS is called overnight index swaps.
+
+\subsection{Collateralized vs. Uncollateralized Borrowing Rates}
+\begin{definition}
+    \textbf{Collateralized Rate} is the rate of loans backed by collateral.\\
+    The borrower pledges assets (e.g., government bonds) to secure the loan.
+\end{definition}
+Examples include SOFR (US) Based on U.S. Treasury-backed repo transactions,
+and TONA (Tokyo Overnight Average Rate) based on Japanese government bonds.
+
+On the other hand, both LIBOR and SONIA are uncollateralized rates.\\
+
+Collateralized borrowing rates tend to be lower than 
+uncollateralized rates because they have less credit risk.
+
+\subsection{Daily Compounded Rates}
+OIS are linked to daily rates, but exchange payments usually FOR 3M, 6M, 1Y, etc.\\
