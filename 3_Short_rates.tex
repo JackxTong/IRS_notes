@@ -48,7 +48,7 @@ $\theta$ a function of time, $\theta(t)$, i.e.
 \begin{align*}
     dr_t &= k(\theta_t-r_t)dt + \sigma dW_t
 \end{align*}
-So we arrived with the one-factor Hull-White model.\\
+So we arrived with the one-factor \textbf{Hull-White} model.\\
 
 \subsection{CIR Model}
 For $r_0 > 0$, 
@@ -88,3 +88,21 @@ This suggests perfect terminal correlation:
 \begin{align*}
     \text{Corr}(R(t, T_1), R(t, T_2)) = 1
 \end{align*}
+
+\subsection{Heston Model}
+Consider stock price $S_t$ and volatility $v_t$:
+\begin{align*}
+    dS_t &= r S_t dt + \sqrt{v_t} S_t dW_t^S\\
+    dv_t &= \kappa(\theta - v_t) dt + \sigma \sqrt{v_t} dW_t^V
+\end{align*}
+Here the stock price follows classical GBM, and 
+the volatility follows a CIR process. 
+This is a stochastic volatility model, where volatility has same assumed
+properties as $r_t$ in the CIR model: \\
+\begin{itemize}
+    \item mean reversion to $\theta$
+    \item cannot go negative
+    \item has a non-central chi-squared distribution (fatter tails)
+\end{itemize}
+
+
