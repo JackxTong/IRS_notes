@@ -213,6 +213,24 @@ def predict_with_threshold(model, X_new, thr):
     prob = model.predict_proba(X_new)[:, 1]
     pred = (prob >= thr).astype(int)
     return pred, prob
+    
+    
+import numpy as np
+
+def get_logit(model, X, eps=1e-15):
+    """
+    Return the logit (log-odds) of predicted probabilities.
+    logit(p) = log(p / (1 - p))
+    """
+    prob = model.predict_proba(X)[:, 1]
+    prob = np.clip(prob, eps, 1 - eps)  # avoid log(0)
+    return np.log(prob / (1 - prob))
+
+# Example usage on your trained models:
+logit_lr  = get_logit(log_reg, X)
+logit_xgb = get_logit(xgb, X)
+logit_lgb = get_logit(lgb, X)
+logit_cat = get_logit(cat, X)
 
 # Example usage:
 # pred_lr, prob_lr = predict_with_threshold(log_reg, X_new, thresholds["LogisticRegression"])
